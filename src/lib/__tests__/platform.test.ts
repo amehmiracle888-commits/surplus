@@ -8,6 +8,11 @@ import { formatNaira, koboToNaira, nairaToKobo } from "@/lib/utils";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { renderEmailTemplate } from "@/lib/notifications";
 import { getSupplierAdapter } from "@/lib/suppliers/registry";
+import {
+  hasServiceSharedLogin,
+  hasSharedLogin,
+  isSharedOptionSelected,
+} from "@/lib/product-notices";
 
 describe("Encryption & Credential Vault", () => {
   it("encrypts and decrypts supplier secrets using AES-256-GCM", () => {
@@ -155,5 +160,40 @@ describe("Canonical App URL Resolution (Email Verification & Payment Redirects)"
       (process.env as Record<string, string>).NODE_ENV = prevEnv || "test";
       if (prevApp !== undefined) process.env.NEXT_PUBLIC_APP_URL = prevApp;
     }
+  });
+});
+
+describe("Product Notices & Shared Login Helpers", () => {
+  it("detects shared login from options_schema and metadata and distinguishes personal selection", () => {
+    const nord = {
+      name: "NordVPN",
+      short_description: "VPN subscription",
+      description: "Encrypted VPN",
+      metadata: { device_limit: 1 },
+      options_schema: [
+        {
+          key: "plan_tier",
+          label: "Account Tier",
+          type: "select" as const,
+          required: true,
+          options: [
+            { label: "Shared Login Details (Strictly 1 User / 1 Device)", value: "shared", price_delta_kobo: 0 },
+            { label: "Semi-Private / Personal Login (1 User / 1 Device)", value: "personal", price_delta_kobo: 350000 },
+          ],
+        },
+      ],
+    };
+
+    expect(hasSharedLogin(nord)).toBe(true);
+    expect(isSharedOptionSelected(nord, { plan_tier: "shared" })).toEqual({
+      offersShared: true,
+      selectedIsShared: true,
+    });
+    expect(isSharedOptionSelected(nord, { plan_tier: "personal" })).toEqual({
+      offersShared: true,
+      selectedIsShared: false,
+    });
+    expect(hasServiceSharedLogin({ label: "NordVPN Shared", metadata: {}, credentials: {} })).toBe(true);
+    expect(hasServiceSharedLogin({ label: "ExpressVPN Private", metadata: {}, credentials: {} })).toBe(false);
   });
 });

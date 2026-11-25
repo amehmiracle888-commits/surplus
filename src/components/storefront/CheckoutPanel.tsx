@@ -3,7 +3,15 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CreditCard, Loader2, Lock, Wallet } from "lucide-react";
+import { AlertTriangle, CreditCard, Loader2, Lock, ShieldAlert, Wallet } from "lucide-react";
+import {
+  isSharedOptionSelected,
+  RESEARCH_DISCLAIMER_SHORT,
+  RESEARCH_DISCLAIMER_TITLE,
+  SHARED_LOGIN_BODY,
+  SHARED_LOGIN_HEADING,
+  STRICT_USER_LIMIT_LONG,
+} from "@/lib/product-notices";
 import { formatNaira } from "@/lib/utils";
 import type { PublicProduct } from "@/types/database";
 
@@ -44,6 +52,7 @@ export function CheckoutPanel({ product, isAuthenticated, walletBalanceKobo }: C
 
   const totalKobo = unitPriceKobo * quantity;
   const sufficientWallet = walletBalanceKobo !== null && walletBalanceKobo >= totalKobo;
+  const { offersShared, selectedIsShared } = isSharedOptionSelected(product, selectedOptions);
 
   async function handleCheckout() {
     setError(null);
@@ -102,6 +111,10 @@ export function CheckoutPanel({ product, isAuthenticated, walletBalanceKobo }: C
           {product.delivery_method === "automated" ? "Automated Delivery" : "Manual Fulfilment"}
         </span>
       </div>
+
+      <p className="mt-3 text-xs font-semibold text-blue-300">
+        License Limit: {STRICT_USER_LIMIT_LONG}
+      </p>
 
       <div className="mt-5 space-y-4">
         {(product.options_schema ?? []).map((opt) => (
@@ -183,6 +196,16 @@ export function CheckoutPanel({ product, isAuthenticated, walletBalanceKobo }: C
           </button>
         </div>
 
+        {offersShared && selectedIsShared && (
+          <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-xs text-amber-100">
+            <p className="flex items-center gap-1.5 font-bold uppercase tracking-wide text-amber-300">
+              <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+              {SHARED_LOGIN_HEADING}
+            </p>
+            <p className="mt-1 font-semibold leading-relaxed">{SHARED_LOGIN_BODY}</p>
+          </div>
+        )}
+
         {error && (
           <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-xs text-rose-200">
             {error}
@@ -220,6 +243,20 @@ export function CheckoutPanel({ product, isAuthenticated, walletBalanceKobo }: C
             </Link>
           </p>
         )}
+
+        <div className="rounded-xl border border-slate-800 bg-[#070B19] p-3.5 text-[11px] leading-relaxed text-slate-400">
+          <p className="flex items-center gap-1.5 font-semibold text-slate-200">
+            <ShieldAlert className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+            {RESEARCH_DISCLAIMER_TITLE}
+          </p>
+          <p className="mt-1">
+            {RESEARCH_DISCLAIMER_SHORT}{" "}
+            <Link href="/terms" className="text-blue-400 hover:underline">
+              View Terms of Service
+            </Link>
+            .
+          </p>
+        </div>
       </div>
     </div>
   );

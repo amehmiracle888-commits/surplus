@@ -1,12 +1,18 @@
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, Clock, Network, Phone, Shield, Zap } from "lucide-react";
 import { formatDurationLabel, formatNaira } from "@/lib/utils";
+import {
+  hasSharedLogin,
+  SHARED_LOGIN_HEADING,
+  STRICT_USER_LIMIT_SHORT,
+} from "@/lib/product-notices";
 import type { PublicProduct } from "@/types/database";
 
 export function ProductCard({ product }: { product: PublicProduct }) {
   const categorySlug = product.category?.slug || "vpn";
   const isOut = product.availability_status === "out_of_stock" || product.availability_status === "discontinued";
   const meta = product.metadata || {};
+  const sharedLogin = hasSharedLogin(product);
 
   const CategoryIcon = categorySlug === "proxy" ? Network : categorySlug === "uk-number" ? Phone : Shield;
 
@@ -60,10 +66,14 @@ export function ProductCard({ product }: { product: PublicProduct }) {
             {formatDurationLabel(product.duration_days, product.billing_cycle)}
           </span>
 
-          {categorySlug === "vpn" && meta.device_limit && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-slate-900/90 px-2.5 py-1 ring-1 ring-slate-800">
-              <CheckCircle2 className="h-3.5 w-3.5 text-blue-400" />
-              {meta.device_limit} Devices
+          <span className="inline-flex items-center gap-1 rounded-md bg-slate-900/90 px-2.5 py-1 font-medium ring-1 ring-slate-800">
+            <CheckCircle2 className="h-3.5 w-3.5 text-blue-400" />
+            {STRICT_USER_LIMIT_SHORT}
+          </span>
+
+          {sharedLogin && (
+            <span className="inline-flex items-center rounded-md bg-amber-500/15 px-2.5 py-1 font-bold tracking-wide text-amber-300 ring-1 ring-amber-500/40">
+              {SHARED_LOGIN_HEADING}
             </span>
           )}
 

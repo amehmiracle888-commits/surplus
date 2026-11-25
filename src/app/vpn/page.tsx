@@ -22,8 +22,8 @@ export default async function VpnPage() {
           <div>
             <h1 className="text-3xl font-bold text-white">VPN Subscriptions</h1>
             <p className="mt-2 max-w-2xl text-sm text-slate-400">
-              Encrypted VPN accounts and activation keys across monthly, quarterly, six-month, and
-              annual plans with transparent device limits and server locations.
+              Encrypted VPN accounts and activation keys across weekly, monthly, and quarterly plans
+              with strictly 1 user (1 device) per purchase and clear shared-login notices where applicable.
             </p>
           </div>
         </div>

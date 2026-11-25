@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, Loader2, X } from "lucide-react";
+import { AlertTriangle, Eye, Loader2, X } from "lucide-react";
+import { hasServiceSharedLogin, SHARED_LOGIN_BODY, SHARED_LOGIN_HEADING } from "@/lib/product-notices";
 import { formatNaira } from "@/lib/utils";
 
 interface OrderSummary {
@@ -220,17 +221,32 @@ export function OrdersClient({
                   </p>
                 ) : (
                   <div className="mt-2 space-y-2">
-                    {selectedOrder.services.map((srv) => (
-                      <div
-                        key={srv.id}
-                        className="rounded-xl border border-emerald-500/20 bg-[#070B19] p-4"
-                      >
-                        <p className="font-medium text-emerald-300">{srv.service_label}</p>
-                        <pre className="mt-2 overflow-x-auto font-mono text-xs text-slate-200">
-                          {JSON.stringify(srv.credentials, null, 2)}
-                        </pre>
-                      </div>
-                    ))}
+                    {selectedOrder.services.map((srv) => {
+                      const isShared = hasServiceSharedLogin({
+                        label: srv.service_label,
+                        credentials: srv.credentials,
+                      });
+                      return (
+                        <div
+                          key={srv.id}
+                          className="rounded-xl border border-emerald-500/20 bg-[#070B19] p-4"
+                        >
+                          <p className="font-medium text-emerald-300">{srv.service_label}</p>
+                          {isShared && (
+                            <div className="mt-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-100">
+                              <p className="flex items-center gap-1.5 font-bold uppercase tracking-wide text-amber-300">
+                                <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                                {SHARED_LOGIN_HEADING} — STRICTLY 1 USER (1 DEVICE)
+                              </p>
+                              <p className="mt-1 font-semibold">{SHARED_LOGIN_BODY}</p>
+                            </div>
+                          )}
+                          <pre className="mt-2 overflow-x-auto font-mono text-xs text-slate-200">
+                            {JSON.stringify(srv.credentials, null, 2)}
+                          </pre>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>

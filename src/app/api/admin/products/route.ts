@@ -86,7 +86,7 @@ export async function POST(request: Request) {
       is_active: d.is_active,
       is_featured: d.is_featured,
       is_popular: d.is_popular,
-      metadata: d.metadata,
+      metadata: { ...d.metadata, device_limit: 1 },
       options_schema: d.options_schema,
     };
 
@@ -146,7 +146,7 @@ export async function PATCH(request: Request) {
       is_active: d.is_active,
       is_featured: d.is_featured,
       is_popular: d.is_popular,
-      metadata: d.metadata,
+      metadata: { ...d.metadata, device_limit: 1 },
       options_schema: d.options_schema,
     };
 

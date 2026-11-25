@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { RESEARCH_DISCLAIMER_FULL } from "@/lib/product-notices";
 import type { SiteConfig } from "@/types/database";
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
@@ -47,7 +48,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   faqs: [],
   setup_guides: [],
   policies: {
-    terms: "All digital services are provisioned strictly for lawful use.",
+    terms: RESEARCH_DISCLAIMER_FULL,
     privacy: "We process only the personal data required for authentication, billing, and fulfilment.",
     refund: "Confirmed fulfilment failures are automatically credited back to your wallet or refunded.",
   },

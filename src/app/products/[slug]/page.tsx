@@ -1,11 +1,19 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, FileText, Info, Shield } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CheckCircle2, FileText, Info, Shield, ShieldAlert } from "lucide-react";
 import { PublicShell } from "@/components/layout/PublicShell";
 import { CheckoutPanel } from "@/components/storefront/CheckoutPanel";
 import { getPublicProductBySlug } from "@/lib/catalog";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  hasSharedLogin,
+  RESEARCH_DISCLAIMER_SHORT,
+  RESEARCH_DISCLAIMER_TITLE,
+  SHARED_LOGIN_BODY,
+  SHARED_LOGIN_HEADING,
+  STRICT_USER_LIMIT_LONG,
+} from "@/lib/product-notices";
 import { formatDurationLabel, formatNaira } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +41,7 @@ export default async function ProductDetailPage({
 
   const categorySlug = product.category?.slug || "vpn";
   const meta = product.metadata || {};
+  const sharedLogin = hasSharedLogin(product);
 
   return (
     <PublicShell>
@@ -78,23 +87,20 @@ export default async function ProductDetailPage({
 
               {/* Category-Specific Specifications */}
               <div className="mt-6 grid gap-3 border-t border-slate-800 pt-6 sm:grid-cols-2">
+                <div className="rounded-xl bg-[#070B19] p-4 ring-1 ring-slate-800">
+                  <p className="text-xs text-slate-400">User &amp; Device Limit</p>
+                  <p className="mt-1 text-sm font-bold text-white">{STRICT_USER_LIMIT_LONG}</p>
+                </div>
+
                 {categorySlug === "vpn" && (
-                  <>
-                    <div className="rounded-xl bg-[#070B19] p-4 ring-1 ring-slate-800">
-                      <p className="text-xs text-slate-400">Device Limit</p>
-                      <p className="mt-1 text-sm font-semibold text-white">
-                        {meta.device_limit ? `${meta.device_limit} simultaneous devices` : "See plan details"}
-                      </p>
-                    </div>
-                    <div className="rounded-xl bg-[#070B19] p-4 ring-1 ring-slate-800">
-                      <p className="text-xs text-slate-400">Server Locations</p>
-                      <p className="mt-1 text-sm font-semibold text-white">
-                        {Array.isArray(meta.server_locations) && meta.server_locations.length > 0
-                          ? meta.server_locations.join(", ")
-                          : "Global provider network"}
-                      </p>
-                    </div>
-                  </>
+                  <div className="rounded-xl bg-[#070B19] p-4 ring-1 ring-slate-800">
+                    <p className="text-xs text-slate-400">Server Locations</p>
+                    <p className="mt-1 text-sm font-semibold text-white">
+                      {Array.isArray(meta.server_locations) && meta.server_locations.length > 0
+                        ? meta.server_locations.join(", ")
+                        : "Global provider network"}
+                    </p>
+                  </div>
                 )}
 
                 {categorySlug === "proxy" && (
@@ -162,6 +168,32 @@ export default async function ProductDetailPage({
                   </>
                 )}
               </div>
+
+              {sharedLogin && (
+                <div className="mt-5 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
+                  <p className="flex items-center gap-2 text-sm font-bold tracking-wide text-amber-300">
+                    <AlertTriangle className="h-4 w-4 shrink-0" />
+                    {SHARED_LOGIN_HEADING} — READ CAREFULLY
+                  </p>
+                  <p className="mt-1.5 text-sm font-semibold leading-relaxed text-amber-100">
+                    {SHARED_LOGIN_BODY}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-2xl border border-blue-500/25 bg-blue-500/5 p-6">
+              <h2 className="flex items-center gap-2 text-base font-semibold text-white">
+                <ShieldAlert className="h-4 w-4 text-blue-400" />
+                {RESEARCH_DISCLAIMER_TITLE}
+              </h2>
+              <p className="mt-2.5 text-sm leading-relaxed text-slate-300">
+                {RESEARCH_DISCLAIMER_SHORT}{" "}
+                <Link href="/terms" className="font-medium text-blue-400 hover:underline">
+                  Read full acceptable-use terms
+                </Link>
+                .
+              </p>
             </div>
 
             {product.setup_instructions && (

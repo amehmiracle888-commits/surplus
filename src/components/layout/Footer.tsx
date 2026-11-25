@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mail, MessageCircle, ShieldCheck } from "lucide-react";
+import { RESEARCH_DISCLAIMER_SHORT, RESEARCH_DISCLAIMER_TITLE } from "@/lib/product-notices";
 import type { SiteConfig } from "@/types/database";
 
 export function Footer({ config }: { config: SiteConfig }) {
@@ -17,7 +18,7 @@ export function Footer({ config }: { config: SiteConfig }) {
               <span className="text-base font-semibold text-white">{config.branding.brandName}</span>
             </div>
             <p className="text-sm leading-relaxed text-slate-400">
-              {config.branding.tagline}. Transparent pricing in Nigerian Naira (₦) with Paystack
+              {config.branding.tagline}. Transparent pricing in Nigerian Naira (₦) with Bachs.io
               verification and automated provisioning.
             </p>
           </div>
@@ -120,7 +121,16 @@ export function Footer({ config }: { config: SiteConfig }) {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-800/80 pt-8 text-xs text-slate-500 sm:flex-row">
+        <div className="mt-10 rounded-xl border border-slate-800/80 bg-[#0D1326]/70 px-4 py-3 text-xs leading-relaxed text-slate-400">
+          <span className="font-semibold text-slate-200">{RESEARCH_DISCLAIMER_TITLE}: </span>
+          {RESEARCH_DISCLAIMER_SHORT}{" "}
+          <Link href="/terms" className="text-blue-400 hover:underline">
+            Terms of Service
+          </Link>
+          .
+        </div>
+
+        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-slate-800/80 pt-8 text-xs text-slate-500 sm:flex-row">
           <p>
             &copy; {currentYear} {config.branding.brandName}. All rights reserved.
           </p>

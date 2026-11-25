@@ -80,8 +80,8 @@ export default async function HomePage() {
                 VPN Subscriptions
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-slate-400">
-                Monthly, quarterly, six-month, and annual plans across leading VPN providers with clear
-                device limits and setup guides.
+                Weekly and monthly plans across leading VPN providers with strict 1-user (1-device)
+                limits, bold shared-login notices where applicable, and setup guides.
               </p>
               <span className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-blue-400">
                 Browse VPN plans <ArrowRight className="h-3.5 w-3.5" />

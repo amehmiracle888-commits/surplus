@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   Activity,
+  AlertTriangle,
   Check,
   Copy,
   Download,
@@ -11,6 +12,7 @@ import {
   MessageSquare,
   RefreshCw,
 } from "lucide-react";
+import { hasServiceSharedLogin, SHARED_LOGIN_BODY, SHARED_LOGIN_HEADING } from "@/lib/product-notices";
 import { formatNaira } from "@/lib/utils";
 
 interface CustomerServiceItem {
@@ -162,6 +164,11 @@ export function CustomerServicesClient({
           {services.map((srv) => {
             const c = srv.credentials || {};
             const m = srv.public_metadata || {};
+            const isShared = hasServiceSharedLogin({
+              label: srv.service_label,
+              metadata: m,
+              credentials: c,
+            });
             return (
               <div key={srv.id} className="rounded-2xl border border-slate-800 bg-[#0D1326] p-6">
                 <div className="flex flex-col justify-between gap-4 border-b border-slate-800 pb-4 sm:flex-row sm:items-center">
@@ -239,6 +246,16 @@ export function CustomerServicesClient({
                     )}
                   </div>
                 </div>
+
+                {isShared && (
+                  <div className="mt-4 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3.5 text-xs text-amber-100">
+                    <p className="flex items-center gap-1.5 font-bold uppercase tracking-wide text-amber-300">
+                      <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                      {SHARED_LOGIN_HEADING} — STRICTLY 1 USER (1 DEVICE)
+                    </p>
+                    <p className="mt-1 font-semibold leading-relaxed">{SHARED_LOGIN_BODY}</p>
+                  </div>
+                )}
 
                 {/* Credentials Grid */}
                 <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
