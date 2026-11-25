@@ -19,7 +19,7 @@ export function ProductCard({ product }: { product: PublicProduct }) {
               <img
                 src={product.image_url}
                 alt={product.name}
-                className="h-11 w-11 rounded-xl border border-slate-800 object-cover"
+                className="h-11 w-11 rounded-xl border border-slate-800 bg-[#070B19] object-contain p-1"
               />
             ) : (
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/20 to-violet-500/20 text-blue-400 ring-1 ring-blue-500/25">

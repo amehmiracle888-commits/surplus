@@ -62,7 +62,16 @@ export default async function ProductDetailPage({
                 </span>
               </div>
 
-              <h1 className="mt-4 text-3xl font-bold text-white">{product.name}</h1>
+              <div className="mt-4 flex items-center gap-4">
+                {product.image_url && (
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className="h-14 w-14 shrink-0 rounded-xl border border-slate-800 bg-[#070B19] object-contain p-1.5"
+                  />
+                )}
+                <h1 className="text-3xl font-bold text-white">{product.name}</h1>
+              </div>
               <p className="mt-3 text-sm leading-relaxed text-slate-300">
                 {product.description || product.short_description}
               </p>
