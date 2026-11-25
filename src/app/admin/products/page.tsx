@@ -70,6 +70,9 @@ export default function AdminProductsPage() {
   const [isPopular, setIsPopular] = useState(false);
   const [metadataJson, setMetadataJson] = useState("{}");
   const [optionsJson, setOptionsJson] = useState("[]");
+  const [newCatName, setNewCatName] = useState("");
+  const [newCatSlug, setNewCatSlug] = useState("");
+  const [catBusy, setCatBusy] = useState(false);
 
   async function loadAll() {
     setLoading(true);
@@ -220,6 +223,81 @@ export default function AdminProductsPage() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this product?")) return;
     await fetch(`/api/admin/products?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+    await loadAll();
+  }
+
+  async function toggleActive(p: ProductRow) {
+    await fetch("/api/admin/products", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: p.id,
+        category_id: p.category_id,
+        slug: p.slug,
+        name: p.name,
+        provider: p.provider,
+        short_description: p.short_description,
+        description: p.description,
+        image_url: p.image_url,
+        terms_and_conditions: p.terms_and_conditions,
+        setup_instructions: p.setup_instructions,
+        billing_cycle: p.billing_cycle,
+        duration_days: p.duration_days,
+        retail_price_naira: koboToNaira(p.retail_price_kobo),
+        wholesale_cost_naira: koboToNaira(p.wholesale_cost_kobo),
+        renewal_price_naira: p.renewal_price_kobo != null ? koboToNaira(p.renewal_price_kobo) : null,
+        delivery_method: p.delivery_method,
+        availability_status: p.availability_status,
+        default_supplier_id: p.default_supplier_id,
+        is_active: !p.is_active,
+        is_featured: p.is_featured,
+        is_popular: p.is_popular,
+        metadata: p.metadata ?? {},
+        options_schema: p.options_schema ?? [],
+      }),
+    });
+    await loadAll();
+  }
+
+  async function handleCreateCategory(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setCatBusy(true);
+    try {
+      const slugVal = (newCatSlug || newCatName)
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+      const res = await fetch("/api/admin/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newCatName.trim(), slug: slugVal }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Unable to create category");
+        return;
+      }
+      setNewCatName("");
+      setNewCatSlug("");
+      await loadAll();
+    } finally {
+      setCatBusy(false);
+    }
+  }
+
+  async function handleDeleteCategory(id: string) {
+    if (!confirm("Delete this category? Only categories with no products can be deleted.")) return;
+    setError(null);
+    const res = await fetch(`/api/admin/categories?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.error || "Unable to delete category");
+      return;
+    }
     await loadAll();
   }
 
@@ -561,11 +639,17 @@ export default function AdminProductsPage() {
                   </td>
                   <td className="px-5 py-3.5 capitalize text-slate-300">{p.delivery_method}</td>
                   <td className="px-5 py-3.5 text-xs">
-                    {p.is_active ? (
-                      <span className="text-emerald-400">Active</span>
-                    ) : (
-                      <span className="text-slate-500">Disabled</span>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => toggleActive(p)}
+                      className={`rounded-full px-2.5 py-0.5 font-medium ${
+                        p.is_active
+                          ? "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                          : "bg-slate-800 text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {p.is_active ? "Active" : "Disabled"}
+                    </button>
                   </td>
                   <td className="px-5 py-3.5 text-right space-x-2">
                     <button
@@ -589,6 +673,53 @@ export default function AdminProductsPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Category Management */}
+      <section className="rounded-2xl border border-slate-800 bg-[#0D1326] p-6 space-y-4">
+        <h2 className="text-base font-semibold text-white">Product Categories</h2>
+        <form onSubmit={handleCreateCategory} className="grid gap-3 sm:grid-cols-3">
+          <input
+            required
+            value={newCatName}
+            onChange={(e) => setNewCatName(e.target.value)}
+            placeholder="Category Name (e.g., Cloud Servers)"
+            className="rounded-xl border border-slate-800 bg-[#070B19] px-3 py-2 text-sm text-white"
+          />
+          <input
+            value={newCatSlug}
+            onChange={(e) => setNewCatSlug(e.target.value)}
+            placeholder="slug (optional, e.g. cloud-servers)"
+            className="rounded-xl border border-slate-800 bg-[#070B19] px-3 py-2 text-sm text-white"
+          />
+          <button
+            type="submit"
+            disabled={catBusy}
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white"
+          >
+            <Plus className="h-3.5 w-3.5" /> Add Category
+          </button>
+        </form>
+        <div className="flex flex-wrap gap-2">
+          {categories.map((c) => (
+            <div
+              key={c.id}
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-[#070B19] px-3 py-1.5 text-xs text-slate-200"
+            >
+              <span>
+                {c.name} <span className="font-mono text-slate-500">({c.slug})</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => handleDeleteCategory(c.id)}
+                className="text-rose-400 hover:text-rose-300"
+                title="Delete unused category"
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

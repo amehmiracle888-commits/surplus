@@ -18,10 +18,10 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
     secondaryCta: "Create Account",
     instantDeliveryTitle: "Automated Provisioning After Verified Payment",
     instantDeliveryBody:
-      "Once Paystack confirms your payment or your wallet is debited, our backend connects directly to the configured supplier API to provision your service and deliver credentials into your dashboard and inbox.",
+      "Once Bachs.io confirms your payment or your wallet is debited, our backend connects directly to the configured supplier API or operations queue to provision your service and deliver credentials into your dashboard and inbox.",
   },
   contact: {
-    supportEmail: "support@yourdomain.com",
+    supportEmail: "",
     whatsappUrl: "",
     whatsappDisplay: "",
     telegramUrl: "",

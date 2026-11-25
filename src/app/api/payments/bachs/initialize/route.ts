@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { AuthError, requireCustomer } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createBachsCheckoutSession } from "@/lib/bachs";
+import { BachsApiError, createBachsCheckoutSession } from "@/lib/bachs";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { getAppUrl } from "@/lib/site-url";
 import { generateReference, nairaToKobo } from "@/lib/utils";
 
 const DepositSchema = z.object({
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const parsed = DepositSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid deposit payload" }, { status: 400 });
+      return NextResponse.json({ error: "Please enter a valid deposit amount." }, { status: 400 });
     }
 
     const admin = createAdminClient();
@@ -60,7 +61,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Customer wallet not found" }, { status: 404 });
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
+    const appUrl = getAppUrl(request);
     const session = await createBachsCheckoutSession({
       amountKobo,
       email: user.email,
@@ -85,11 +86,16 @@ export async function POST(request: Request) {
       amount_kobo: amountKobo,
       currency: "NGN",
       status: "initialized",
-      metadata: { amount_naira: parsed.data.amountNaira, checkout_id: session.id },
+      metadata: {
+        amount_naira: parsed.data.amountNaira,
+        checkout_id: session.id,
+        callback_origin: appUrl,
+      },
     });
 
     if (insertErr) {
-      return NextResponse.json({ error: insertErr.message }, { status: 500 });
+      console.error("[Bachs initialize insertErr]", insertErr);
+      return NextResponse.json({ error: "Unable to record payment session." }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -101,8 +107,15 @@ export async function POST(request: Request) {
     if (err instanceof AuthError) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
+    if (err instanceof BachsApiError) {
+      const userMessage = err.detail?.includes("localhost")
+        ? "Payment gateway requires a public HTTPS application URL. Configure NEXT_PUBLIC_APP_URL to your deployed domain or test with a sandbox key."
+        : err.message;
+      return NextResponse.json({ error: userMessage }, { status: err.status >= 400 && err.status < 500 ? 400 : 502 });
+    }
+    console.error("[Bachs initialize error]", err);
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Failed to initialize Bachs deposit" },
+      { error: "Unable to initialize payment right now. Please try again." },
       { status: 500 }
     );
   }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Loader2, Lock, Mail, Phone, ShieldCheck, User } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { getBrowserOrigin } from "@/lib/site-url";
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
@@ -20,7 +21,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const supabase = createClient();
-      const origin = window.location.origin;
+      const origin = getBrowserOrigin();
       const { error: signUpErr } = await supabase.auth.signUp({
         email,
         password,
@@ -52,7 +53,7 @@ export default function RegisterPage() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-violet-600">
             <ShieldCheck className="h-4 w-4 text-white" />
           </div>
-          Back to Storefront
+          Back to Home
         </Link>
 
         {success ? (

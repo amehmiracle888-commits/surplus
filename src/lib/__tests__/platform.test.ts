@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { decryptJsonSecret, decryptSecret, encryptJsonSecret, encryptSecret } from "@/lib/crypto";
 import { verifyPaystackWebhookSignature } from "@/lib/paystack";
 import { verifyBachsWebhookSignature } from "@/lib/bachs";
+import { getAppUrl } from "@/lib/site-url";
 import { formatNaira, koboToNaira, nairaToKobo } from "@/lib/utils";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { renderEmailTemplate } from "@/lib/notifications";
@@ -132,5 +133,27 @@ describe("Supplier Adapters (No Fake Integrations)", () => {
       config: {},
     });
     expect(testRes.ok).toBe(false);
+  });
+});
+
+describe("Canonical App URL Resolution (Email Verification & Payment Redirects)", () => {
+  it("resolves forwarded production host over localhost NEXT_PUBLIC_APP_URL in production", () => {
+    const prevEnv = process.env.NODE_ENV;
+    const prevApp = process.env.NEXT_PUBLIC_APP_URL;
+    try {
+      (process.env as Record<string, string>).NODE_ENV = "production";
+      process.env.NEXT_PUBLIC_APP_URL = "http://localhost:3000";
+
+      const req = new Request("http://localhost:3000/api/payments/bachs/initialize", {
+        headers: {
+          "x-forwarded-host": "surplus-prod.vercel.app",
+          "x-forwarded-proto": "https",
+        },
+      });
+      expect(getAppUrl(req)).toBe("https://surplus-prod.vercel.app");
+    } finally {
+      (process.env as Record<string, string>).NODE_ENV = prevEnv || "test";
+      if (prevApp !== undefined) process.env.NEXT_PUBLIC_APP_URL = prevApp;
+    }
   });
 });

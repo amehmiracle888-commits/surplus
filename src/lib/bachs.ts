@@ -17,12 +17,28 @@ export function getBachsBaseUrl(secretKey?: string): string {
   return "https://api.bachs.io";
 }
 
+export class BachsApiError extends Error {
+  status: number;
+  errorCode?: string;
+  detail?: string;
+
+  constructor(status: number, message: string, errorCode?: string, detail?: string) {
+    super(message);
+    this.name = "BachsApiError";
+    this.status = status;
+    this.errorCode = errorCode;
+    this.detail = detail;
+  }
+}
+
 export interface BachsCheckoutSession {
   id: string;
+  checkout_id?: string;
   object?: string;
   status: string;
   payment_status: string;
   currency: string;
+  amount?: string | number;
   amount_total?: string | number;
   checkout_url: string;
   customer_details?: {
@@ -30,6 +46,17 @@ export interface BachsCheckoutSession {
     name?: string;
   };
   metadata?: Record<string, unknown>;
+}
+
+function normalizeBachsSession(raw: Record<string, unknown>): BachsCheckoutSession {
+  const obj = (raw?.data && typeof raw.data === "object" ? raw.data : raw) as Record<string, unknown>;
+  const resolvedId = String(obj.checkout_id || obj.id || "");
+  return {
+    ...(obj as unknown as BachsCheckoutSession),
+    id: resolvedId,
+    checkout_id: resolvedId,
+    amount_total: (obj.amount_total ?? obj.amount) as string | number | undefined,
+  };
 }
 
 export async function createBachsCheckoutSession(params: {
@@ -70,12 +97,30 @@ export async function createBachsCheckoutSession(params: {
     }),
   });
 
-  const json = await response.json().catch(() => ({}));
+  const json = (await response.json().catch(() => ({}))) as Record<string, unknown>;
   if (!response.ok) {
-    throw new Error(json?.message || json?.error || `Bachs API HTTP ${response.status}`);
+    const detail =
+      (typeof json?.detail === "string" && json.detail) ||
+      (typeof json?.message === "string" && json.message) ||
+      (typeof json?.error === "string" && json.error) ||
+      `Payment provider returned HTTP ${response.status}`;
+    const errorCode = typeof json?.error_code === "string" ? json.error_code : undefined;
+
+    console.error("[Bachs createCheckoutSession error]", {
+      httpStatus: response.status,
+      errorCode,
+      detail,
+      successUrl: params.successUrl,
+    });
+
+    throw new BachsApiError(response.status, detail, errorCode, detail);
   }
 
-  return (json?.data ?? json) as BachsCheckoutSession;
+  const normalized = normalizeBachsSession(json);
+  if (!normalized.id || !normalized.checkout_url) {
+    throw new BachsApiError(502, "Payment provider returned an incomplete checkout session.");
+  }
+  return normalized;
 }
 
 export async function retrieveBachsCheckoutSession(
@@ -96,12 +141,16 @@ export async function retrieveBachsCheckoutSession(
     }
   );
 
-  const json = await response.json().catch(() => ({}));
+  const json = (await response.json().catch(() => ({}))) as Record<string, unknown>;
   if (!response.ok) {
-    throw new Error(json?.message || json?.error || `Bachs verification HTTP ${response.status}`);
+    const detail =
+      (typeof json?.detail === "string" && json.detail) ||
+      (typeof json?.message === "string" && json.message) ||
+      `Payment verification returned HTTP ${response.status}`;
+    throw new BachsApiError(response.status, detail);
   }
 
-  return (json?.data ?? json) as BachsCheckoutSession;
+  return normalizeBachsSession(json);
 }
 
 /**

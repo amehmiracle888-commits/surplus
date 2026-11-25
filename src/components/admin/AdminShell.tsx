@@ -135,7 +135,7 @@ export function AdminShell({
             Administrator Operations
           </span>
           <Link href="/" className="text-xs text-blue-400 hover:underline">
-            View Storefront &rarr;
+            View Website &rarr;
           </Link>
         </header>
         <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>

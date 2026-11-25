@@ -17,6 +17,7 @@ export async function POST(request: Request) {
       data?: {
         object?: {
           id?: string;
+          checkout_id?: string;
           metadata?: { reference?: string };
         };
       };
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
     }
 
     const obj = event.data?.object;
-    const refOrId = obj?.metadata?.reference || obj?.id;
+    const refOrId = obj?.metadata?.reference || obj?.checkout_id || obj?.id;
     if (!refOrId) {
       return NextResponse.json({ error: "Missing checkout session reference" }, { status: 400 });
     }
@@ -35,6 +36,7 @@ export async function POST(request: Request) {
     const result = await settleBachsPayment(refOrId, "webhook");
     return NextResponse.json({ received: true, ...result });
   } catch (err) {
+    console.error("[Bachs webhook error]", err);
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Bachs webhook processing failed" },
       { status: 500 }

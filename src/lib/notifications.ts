@@ -63,7 +63,7 @@ export async function sendNotification(payload: NotificationPayload): Promise<vo
   }
 
   const provider = emailConfig.provider ?? (process.env.EMAIL_PROVIDER as "resend" | "webhook") ?? "resend";
-  const fromEmail = emailConfig.fromEmail || process.env.EMAIL_FROM || "noreply@yourdomain.com";
+  const fromEmail = emailConfig.fromEmail?.trim() || process.env.EMAIL_FROM || "noreply@resend.dev";
   const fromName = emailConfig.fromName || "Digital Services";
 
   let status: "sent" | "failed" | "queued" = "queued";

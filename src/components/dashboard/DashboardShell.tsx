@@ -151,7 +151,7 @@ export function DashboardShell({
             Customer Portal
           </span>
           <Link href="/shop" className="text-xs font-medium text-blue-400 hover:underline">
-            Storefront &rarr;
+            Browse Products &rarr;
           </Link>
         </header>
 

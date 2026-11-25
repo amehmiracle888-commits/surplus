@@ -62,6 +62,17 @@ export async function requireAdmin(): Promise<AuthenticatedUser> {
   return user;
 }
 
+export async function requireSuperAdmin(): Promise<AuthenticatedUser> {
+  const user = await getAuthenticatedUser();
+  if (!user) {
+    throw new AuthError("Authentication required", 401);
+  }
+  if (user.role !== "super_admin") {
+    throw new AuthError("Super administrator privileges required", 403);
+  }
+  return user;
+}
+
 export class AuthError extends Error {
   status: number;
   constructor(message: string, status = 401) {

@@ -3,11 +3,12 @@ import { z } from "zod";
 import { AuthError, requireCustomer } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
-import { createBachsCheckoutSession } from "@/lib/bachs";
+import { BachsApiError, createBachsCheckoutSession } from "@/lib/bachs";
 import { initializePaystackTransaction } from "@/lib/paystack";
 import { processOrderFulfilment } from "@/lib/fulfilment";
 import { sendNotification } from "@/lib/notifications";
 import { writeAuditLog } from "@/lib/audit";
+import { getAppUrl } from "@/lib/site-url";
 import { formatNaira, generateReference } from "@/lib/utils";
 import type { ProductOptionSchema } from "@/types/database";
 
@@ -181,7 +182,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
+    const appUrl = getAppUrl(request);
 
     if (parsed.data.paymentMethod === "bachs") {
       const bachsRef = generateReference("BCH");
@@ -255,8 +256,15 @@ export async function POST(request: Request) {
     if (err instanceof AuthError) {
       return NextResponse.json({ error: err.message }, { status: err.status });
     }
+    if (err instanceof BachsApiError) {
+      const userMessage = err.detail?.includes("localhost")
+        ? "Payment gateway requires a public HTTPS application URL. Configure NEXT_PUBLIC_APP_URL to your deployed domain or test with a sandbox key."
+        : err.message;
+      return NextResponse.json({ error: userMessage }, { status: err.status >= 400 && err.status < 500 ? 400 : 502 });
+    }
+    console.error("[Order checkout error]", err);
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Checkout failed" },
+      { error: "Unable to complete checkout right now. Please try again." },
       { status: 500 }
     );
   }

@@ -10,11 +10,12 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/dashboard";
+  const authErrorParam = searchParams.get("auth_error");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(authErrorParam);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,7 +44,7 @@ function LoginForm() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-violet-600">
             <ShieldCheck className="h-4 w-4 text-white" />
           </div>
-          Back to Storefront
+          Back to Home
         </Link>
 
         <h1 className="mt-6 text-2xl font-bold text-white">Sign in to your account</h1>
