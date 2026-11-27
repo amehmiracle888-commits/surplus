@@ -3,6 +3,7 @@ import { ArrowUpRight, CheckCircle2, Clock, Network, Phone, Shield, Zap } from "
 import { formatDurationLabel, formatNaira } from "@/lib/utils";
 import {
   hasSharedLogin,
+  INSTANT_DELIVERY_TAG,
   SHARED_LOGIN_HEADING,
   STRICT_USER_LIMIT_SHORT,
 } from "@/lib/product-notices";
@@ -43,15 +44,14 @@ export function ProductCard({ product }: { product: PublicProduct }) {
           </div>
 
           <span
-            className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${
+            className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${
               isOut
                 ? "bg-rose-500/10 text-rose-300 ring-1 ring-rose-500/30"
-                : product.delivery_method === "automated"
-                  ? "bg-emerald-500/10 text-emerald-300 ring-1 ring-emerald-500/30"
-                  : "bg-amber-500/10 text-amber-300 ring-1 ring-amber-500/30"
+                : "bg-emerald-500/10 text-emerald-300 ring-1 ring-emerald-500/30"
             }`}
           >
-            {isOut ? "Out of Stock" : product.delivery_method === "automated" ? "Instant API" : "Manual Delivery"}
+            {!isOut && <Zap className="h-3 w-3 shrink-0" />}
+            {isOut ? "Out of Stock" : INSTANT_DELIVERY_TAG}
           </span>
         </div>
 

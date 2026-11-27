@@ -3,8 +3,9 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AlertTriangle, CreditCard, Loader2, Lock, ShieldAlert, Wallet } from "lucide-react";
+import { AlertTriangle, CreditCard, Loader2, Lock, ShieldAlert, Wallet, Zap } from "lucide-react";
 import {
+  INSTANT_DELIVERY_TAG,
   isSharedOptionSelected,
   RESEARCH_DISCLAIMER_SHORT,
   RESEARCH_DISCLAIMER_TITLE,
@@ -107,8 +108,9 @@ export function CheckoutPanel({ product, isAuthenticated, walletBalanceKobo }: C
           <p className="text-xs uppercase tracking-wider text-slate-400">Price (NGN)</p>
           <p className="mt-1 text-3xl font-bold text-white">{formatNaira(totalKobo)}</p>
         </div>
-        <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-300 ring-1 ring-blue-500/25">
-          {product.delivery_method === "automated" ? "Automated Delivery" : "Manual Fulfilment"}
+        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300 ring-1 ring-emerald-500/30">
+          <Zap className="h-3 w-3 shrink-0" />
+          {INSTANT_DELIVERY_TAG}
         </span>
       </div>
 

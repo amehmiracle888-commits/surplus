@@ -221,8 +221,8 @@ export default async function HomePage() {
                 },
                 {
                   step: "03",
-                  title: "Automated or Managed Fulfilment",
-                  desc: "Confirmed payments trigger backend supplier API provisioning or enter admin manual delivery when specified.",
+                  title: "Instant Automated Delivery (5–30 mins)",
+                  desc: "Confirmed payments trigger instant automated provisioning straight to your dashboard within 5 to 30 minutes.",
                 },
                 {
                   step: "04",

@@ -20,7 +20,6 @@ export function ProductCatalogView({
 }: ProductCatalogViewProps) {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(categoryFilter || "all");
-  const [deliveryFilter, setDeliveryFilter] = useState("all");
   const [proxyTypeFilter, setProxyTypeFilter] = useState("all");
   const [ukCapabilityFilter, setUkCapabilityFilter] = useState("all");
 
@@ -28,7 +27,6 @@ export function ProductCatalogView({
     return products.filter((p) => {
       const catSlug = p.category?.slug || "";
       if (selectedCategory !== "all" && catSlug !== selectedCategory) return false;
-      if (deliveryFilter !== "all" && p.delivery_method !== deliveryFilter) return false;
 
       if (proxyTypeFilter !== "all" && catSlug === "proxy") {
         if (p.metadata?.proxy_type !== proxyTypeFilter) return false;
@@ -51,7 +49,7 @@ export function ProductCatalogView({
 
       return true;
     });
-  }, [products, selectedCategory, deliveryFilter, proxyTypeFilter, ukCapabilityFilter, search]);
+  }, [products, selectedCategory, proxyTypeFilter, ukCapabilityFilter, search]);
 
   return (
     <div className="space-y-6">
@@ -111,16 +109,6 @@ export function ProductCatalogView({
               <option value="temporary">Temporary (+44)</option>
             </select>
           )}
-
-          <select
-            value={deliveryFilter}
-            onChange={(e) => setDeliveryFilter(e.target.value)}
-            className="rounded-xl border border-slate-800 bg-[#070B19] px-3 py-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none"
-          >
-            <option value="all">All Delivery Modes</option>
-            <option value="automated">Instant Automated</option>
-            <option value="manual">Manual Admin Delivery</option>
-          </select>
         </div>
       </div>
 

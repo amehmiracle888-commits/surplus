@@ -82,7 +82,7 @@ export function OrdersClient({
       <div>
         <h1 className="text-2xl font-bold text-white">My Orders</h1>
         <p className="mt-1 text-sm text-slate-400">
-          Track payment confirmation, automated or manual fulfilment status, and delivered credentials.
+          Track payment confirmation, instant automated delivery (5–30 mins), and delivered credentials.
         </p>
       </div>
 

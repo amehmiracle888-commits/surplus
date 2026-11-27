@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { AlertTriangle, ArrowLeft, CheckCircle2, FileText, Info, Shield, ShieldAlert } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CheckCircle2, FileText, Info, Shield, ShieldAlert, Zap } from "lucide-react";
 import { PublicShell } from "@/components/layout/PublicShell";
 import { CheckoutPanel } from "@/components/storefront/CheckoutPanel";
 import { getPublicProductBySlug } from "@/lib/catalog";
@@ -8,6 +8,7 @@ import { getAuthenticatedUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   hasSharedLogin,
+  INSTANT_DELIVERY_TAG,
   RESEARCH_DISCLAIMER_SHORT,
   RESEARCH_DISCLAIMER_TITLE,
   SHARED_LOGIN_BODY,
@@ -66,6 +67,10 @@ export default async function ProductDetailPage({
                     Provider: {product.provider}
                   </span>
                 )}
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-3 py-1 text-emerald-300 ring-1 ring-emerald-500/30">
+                  <Zap className="h-3 w-3 shrink-0" />
+                  {INSTANT_DELIVERY_TAG}
+                </span>
                 <span className="rounded-full bg-slate-800 px-3 py-1 text-slate-300">
                   Duration: {formatDurationLabel(product.duration_days, product.billing_cycle)}
                 </span>

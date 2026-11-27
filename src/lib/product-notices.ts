@@ -2,6 +2,7 @@ import type { PublicProduct } from "@/types/database";
 
 export const STRICT_USER_LIMIT_SHORT = "1 User (1 Device)";
 export const STRICT_USER_LIMIT_LONG = "Strictly 1 User (1 Device per purchase)";
+export const INSTANT_DELIVERY_TAG = "Instant Automated Delivery (5–30 mins)";
 
 export const SHARED_LOGIN_HEADING = "SHARED LOGIN DETAILS";
 export const SHARED_LOGIN_BODY =

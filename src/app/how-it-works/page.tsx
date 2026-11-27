@@ -20,8 +20,8 @@ export default function HowItWorksPage() {
     },
     {
       icon: Server,
-      title: "3. Automated Provisioning or Managed Fulfilment",
-      body: "Once payment is confirmed, our backend routes automated products directly to the configured supplier API with idempotency protection. Manual products enter the verified admin queue.",
+      title: "3. Instant Automated Delivery (5–30 mins)",
+      body: "Once payment is confirmed, our backend routes provisioning automatically with idempotency protection and delivers credentials within 5 to 30 minutes.",
     },
     {
       icon: KeyRound,

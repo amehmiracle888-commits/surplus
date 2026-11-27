@@ -21,7 +21,7 @@ export default async function FaqPage() {
           <div>
             <h1 className="text-3xl font-bold text-white">Frequently Asked Questions</h1>
             <p className="mt-1 text-sm text-slate-400">
-              Answers about Naira payments, Paystack verification, automated delivery, and service rules.
+              Answers about Naira payments, Bachs.io verification, instant automated delivery (5–30 mins), and service rules.
             </p>
           </div>
         </div>
