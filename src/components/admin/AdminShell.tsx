@@ -7,6 +7,7 @@ import {
   BarChart3,
   Globe,
   LayoutDashboard,
+  Lock,
   LogOut,
   Menu,
   Package,
@@ -35,17 +36,25 @@ const ADMIN_NAV = [
 export function AdminShell({
   brandName,
   adminEmail,
+  hasPin = false,
   children,
 }: {
   brandName: string;
   adminEmail: string;
+  hasPin?: boolean;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
+  async function lockScreen() {
+    await fetch("/api/auth/pin/lock", { method: "POST" }).catch(() => null);
+    router.refresh();
+  }
+
   async function logout() {
+    await fetch("/api/auth/pin/lock", { method: "POST" }).catch(() => null);
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/login");
@@ -96,6 +105,15 @@ export function AdminShell({
           Customer Portal
         </Link>
         <div className="truncate px-1 text-xs text-slate-500">{adminEmail}</div>
+        {hasPin && (
+          <button
+            type="button"
+            onClick={lockScreen}
+            className="flex w-full items-center gap-2 rounded-xl border border-slate-800 bg-[#070B19] px-3.5 py-2 text-xs font-medium text-blue-300 hover:border-blue-500/40 hover:text-white"
+          >
+            <Lock className="h-3.5 w-3.5" /> Lock Screen
+          </button>
+        )}
         <button
           type="button"
           onClick={logout}

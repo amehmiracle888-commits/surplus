@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeftRight,
   LayoutDashboard,
+  Lock,
   LogOut,
   Menu,
   Network,
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { PinLockScreen } from "@/components/auth/PinLockScreen";
 
 const CUSTOMER_NAV = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -42,6 +44,8 @@ interface DashboardShellProps {
   brandName: string;
   userEmail: string;
   isAdmin?: boolean;
+  hasPin?: boolean;
+  showPinSetupPrompt?: boolean;
   children: React.ReactNode;
 }
 
@@ -49,13 +53,35 @@ export function DashboardShell({
   brandName,
   userEmail,
   isAdmin = false,
+  hasPin = false,
+  showPinSetupPrompt = false,
   children,
 }: DashboardShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [setupOpen, setSetupOpen] = useState(false);
+
+  useEffect(() => {
+    if (!showPinSetupPrompt) {
+      setSetupOpen(false);
+      return;
+    }
+    try {
+      const skipped = window.sessionStorage.getItem("ipcore_pin_setup_skipped");
+      if (!skipped) setSetupOpen(true);
+    } catch {
+      setSetupOpen(true);
+    }
+  }, [showPinSetupPrompt]);
+
+  async function handleLockNow() {
+    await fetch("/api/auth/pin/lock", { method: "POST" }).catch(() => null);
+    router.refresh();
+  }
 
   async function handleLogout() {
+    await fetch("/api/auth/pin/lock", { method: "POST" }).catch(() => null);
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/login");
@@ -90,11 +116,10 @@ export function DashboardShell({
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition ${
-                  active
-                    ? "bg-gradient-to-r from-blue-600/20 to-violet-600/20 text-white ring-1 ring-blue-500/30"
-                    : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-100"
-                }`}
+                className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition ${active
+                  ? "bg-gradient-to-r from-blue-600/20 to-violet-600/20 text-white ring-1 ring-blue-500/30"
+                  : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-100"
+                  }`}
               >
                 <Icon className="h-4 w-4 shrink-0" />
                 {item.label}
@@ -115,6 +140,16 @@ export function DashboardShell({
           </Link>
         )}
         <div className="px-2 text-xs text-slate-500 truncate">{userEmail}</div>
+        {hasPin && (
+          <button
+            type="button"
+            onClick={handleLockNow}
+            className="flex w-full items-center gap-2.5 rounded-xl border border-slate-800 bg-[#070B19] px-3.5 py-2 text-xs font-medium text-blue-300 hover:border-blue-500/40 hover:text-white"
+          >
+            <Lock className="h-3.5 w-3.5" />
+            Lock Screen (4-Digit PIN)
+          </button>
+        )}
         <button
           type="button"
           onClick={handleLogout}
@@ -159,6 +194,23 @@ export function DashboardShell({
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
+
+      {setupOpen && (
+        <PinLockScreen
+          mode="setup"
+          brandName={brandName}
+          userEmail={userEmail}
+          onSuccess={() => setSetupOpen(false)}
+          onSkip={() => {
+            try {
+              window.sessionStorage.setItem("ipcore_pin_setup_skipped", "1");
+            } catch {
+              // ignore storage errors
+            }
+            setSetupOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

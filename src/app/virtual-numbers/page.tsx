@@ -1,6 +1,9 @@
 import { PublicShell } from "@/components/layout/PublicShell";
+import { PinLockScreen } from "@/components/auth/PinLockScreen";
 import { VirtualNumbersClient, type ActivationRecord } from "@/components/virtualsms/VirtualNumbersClient";
 import { getAuthenticatedUser } from "@/lib/auth";
+import { getPinLockState } from "@/lib/pin-lock";
+import { getPublicSiteConfig } from "@/lib/site-config";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +18,20 @@ export default async function VirtualNumbersPage() {
   let initialActivations: ActivationRecord[] = [];
 
   if (user) {
+    const [pinState, config] = await Promise.all([
+      getPinLockState(user.id),
+      getPublicSiteConfig(),
+    ]);
+    if (pinState.schemaReady && pinState.hasPin && !pinState.unlocked) {
+      return (
+        <PinLockScreen
+          mode="unlock"
+          brandName={config.branding.brandName || "IPcore"}
+          userEmail={user.email}
+        />
+      );
+    }
+
     const admin = createAdminClient();
     const [{ data: wallet }, { data: activations }] = await Promise.all([
       admin.from("wallets").select("balance_kobo").eq("user_id", user.id).maybeSingle(),

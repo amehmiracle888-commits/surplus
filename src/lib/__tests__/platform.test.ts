@@ -14,6 +14,13 @@ import {
   isSharedOptionSelected,
 } from "@/lib/product-notices";
 import { calculateRetailPriceNaira, resolveEnabledCountries } from "@/lib/virtualsms-pricing";
+import {
+  createPinUnlockToken,
+  hashPin,
+  isValidPinFormat,
+  verifyPinHash,
+  verifyPinUnlockToken,
+} from "@/lib/pin-lock";
 
 describe("Encryption & Credential Vault", () => {
   it("encrypts and decrypts supplier secrets using AES-256-GCM", () => {
@@ -236,5 +243,25 @@ describe("VirtualSMS Pricing & Country Matching", () => {
       { id: "12", name: "USA" },
       { id: "16", name: "England" },
     ]);
+  });
+});
+
+describe("4-Digit Account Passcode Lock", () => {
+  it("hashes and verifies 4-digit PINs and rejects invalid formats", () => {
+    expect(isValidPinFormat("4829")).toBe(true);
+    expect(isValidPinFormat("123")).toBe(false);
+    expect(isValidPinFormat("12ab")).toBe(false);
+
+    const hashed = hashPin("4829");
+    expect(hashed).not.toContain("4829");
+    expect(verifyPinHash("4829", hashed)).toBe(true);
+    expect(verifyPinHash("0000", hashed)).toBe(false);
+  });
+
+  it("signs and verifies user-bound PIN unlock cookies", () => {
+    const token = createPinUnlockToken("user-123");
+    expect(verifyPinUnlockToken(token, "user-123")).toBe(true);
+    expect(verifyPinUnlockToken(token, "other-user")).toBe(false);
+    expect(verifyPinUnlockToken("tampered.token.sig", "user-123")).toBe(false);
   });
 });
