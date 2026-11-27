@@ -21,12 +21,14 @@ import {
   X,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const CUSTOMER_NAV = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/browse", label: "Browse Products", icon: ShoppingBag },
   { href: "/dashboard/vpns", label: "My VPNs", icon: Shield },
   { href: "/dashboard/proxies", label: "My Proxies", icon: Network },
+  { href: "/virtual-numbers", label: "Instant OTP Numbers", icon: Phone },
   { href: "/dashboard/uk-numbers", label: "My UK Numbers", icon: Phone },
   { href: "/dashboard/orders", label: "My Orders", icon: Package },
   { href: "/dashboard/wallet", label: "Wallet", icon: Wallet },
@@ -64,8 +66,8 @@ export function DashboardShell({
     <div className="flex h-full flex-col justify-between">
       <div>
         <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
-          <Link href="/" className="text-base font-semibold text-white">
-            {brandName}
+          <Link href="/" className="inline-flex items-center">
+            <BrandLogo brandName={brandName} size="sm" />
           </Link>
           <button
             type="button"

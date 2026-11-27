@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Loader2, Mail, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Loader2, Mail } from "lucide-react";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { createClient } from "@/lib/supabase/client";
 import { getBrowserOrigin } from "@/lib/site-url";
 
@@ -37,12 +38,14 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#070B19] px-4 py-12">
       <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-[#0D1326] p-8 shadow-2xl">
-        <Link href="/login" className="inline-flex items-center gap-2 text-sm font-semibold text-white">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-violet-600">
-            <ShieldCheck className="h-4 w-4 text-white" />
-          </div>
-          Back to Sign In
-        </Link>
+        <div className="flex items-center justify-between">
+          <Link href="/" className="inline-flex items-center">
+            <BrandLogo brandName="IPcore" size="md" />
+          </Link>
+          <Link href="/login" className="text-xs text-slate-400 hover:text-white">
+            &larr; Back to Sign In
+          </Link>
+        </div>
 
         {sent ? (
           <div className="mt-6 space-y-3">

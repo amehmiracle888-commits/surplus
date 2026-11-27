@@ -10,6 +10,7 @@ import {
   LogOut,
   Menu,
   Package,
+  Phone,
   PlugZap,
   ShoppingBag,
   Ticket,
@@ -17,10 +18,12 @@ import {
   X,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 
 const ADMIN_NAV = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: ShoppingBag },
+  { href: "/admin/virtual-numbers", label: "SMS Pricing & OTP", icon: Phone },
   { href: "/admin/suppliers", label: "Suppliers & APIs", icon: PlugZap },
   { href: "/admin/orders", label: "Orders", icon: Package },
   { href: "/admin/customers", label: "Customers", icon: Users },
@@ -53,12 +56,7 @@ export function AdminShell({
     <div className="flex h-full flex-col justify-between">
       <div>
         <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
-          <div>
-            <p className="text-sm font-bold text-white">{brandName}</p>
-            <p className="text-[11px] font-medium uppercase tracking-wider text-violet-400">
-              Admin Console
-            </p>
-          </div>
+          <BrandLogo brandName={brandName} size="sm" subtitle="Admin Console" />
           <button type="button" onClick={() => setOpen(false)} className="text-slate-400 lg:hidden">
             <X className="h-5 w-5" />
           </button>

@@ -3,14 +3,14 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export interface NotificationPayload {
   userId?: string | null;
   type:
-    | "welcome"
-    | "payment_success"
-    | "delivery_success"
-    | "delivery_failed"
-    | "expiry_reminder"
-    | "renewal_success"
-    | "wallet_deposit"
-    | "ticket_update";
+  | "welcome"
+  | "payment_success"
+  | "delivery_success"
+  | "delivery_failed"
+  | "expiry_reminder"
+  | "renewal_success"
+  | "wallet_deposit"
+  | "ticket_update";
   recipientEmail?: string | null;
   subject: string;
   bodyHtml: string;

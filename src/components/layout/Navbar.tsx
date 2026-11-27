@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, ShieldCheck, X, ArrowRight, LayoutDashboard } from "lucide-react";
+import { Menu, X, ArrowRight, LayoutDashboard } from "lucide-react";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import type { SiteConfig } from "@/types/database";
 
 interface NavbarProps {
@@ -16,6 +17,7 @@ const NAV_LINKS = [
   { href: "/shop", label: "All Products" },
   { href: "/vpn", label: "VPN Subscriptions" },
   { href: "/proxies", label: "Proxy Services" },
+  { href: "/virtual-numbers", label: "OTP Numbers" },
   { href: "/uk-numbers", label: "UK Numbers" },
   { href: "/how-it-works", label: "How It Works" },
   { href: "/guides", label: "Setup Guides" },
@@ -37,21 +39,12 @@ export function Navbar({ config, isAuthenticated = false, isAdmin = false }: Nav
       )}
 
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5">
-          {config.branding.logoUrl ? (
-            <img
-              src={config.branding.logoUrl}
-              alt={config.branding.brandName}
-              className="h-8 w-8 rounded-lg object-contain"
-            />
-          ) : (
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 shadow-sm shadow-blue-500/25">
-              <ShieldCheck className="h-5 w-5 text-white" />
-            </div>
-          )}
-          <span className="text-base font-semibold tracking-tight text-white">
-            {config.branding.brandName}
-          </span>
+        <Link href="/" className="flex items-center">
+          <BrandLogo
+            brandName={config.branding.brandName}
+            logoUrl={config.branding.logoUrl}
+            size="md"
+          />
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex">

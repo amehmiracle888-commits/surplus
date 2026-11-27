@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Lock } from "lucide-react";
+import Link from "next/link";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { createClient } from "@/lib/supabase/client";
 
 export default function ResetPasswordPage() {
@@ -38,7 +40,10 @@ export default function ResetPasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#070B19] px-4 py-12">
       <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-[#0D1326] p-8 shadow-2xl">
-        <h1 className="text-2xl font-bold text-white">Set a new password</h1>
+        <Link href="/" className="inline-flex items-center">
+          <BrandLogo brandName="IPcore" size="md" />
+        </Link>
+        <h1 className="mt-6 text-2xl font-bold text-white">Set a new password</h1>
         <form onSubmit={handleUpdate} className="mt-6 space-y-4">
           <div>
             <label className="block text-xs font-medium text-slate-300">New password</label>

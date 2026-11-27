@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Loader2, Lock, Mail, Phone, ShieldCheck, User } from "lucide-react";
+import { CheckCircle2, Loader2, Lock, Mail, Phone, User } from "lucide-react";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { createClient } from "@/lib/supabase/client";
 import { getBrowserOrigin } from "@/lib/site-url";
 
@@ -49,12 +50,14 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#070B19] px-4 py-12">
       <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-[#0D1326] p-8 shadow-2xl">
-        <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-white">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-violet-600">
-            <ShieldCheck className="h-4 w-4 text-white" />
-          </div>
-          Back to Home
-        </Link>
+        <div className="flex items-center justify-between">
+          <Link href="/" className="inline-flex items-center">
+            <BrandLogo brandName="IPcore" size="md" />
+          </Link>
+          <Link href="/" className="text-xs text-slate-400 hover:text-white">
+            &larr; Home
+          </Link>
+        </div>
 
         {success ? (
           <div className="mt-6 space-y-4">
@@ -75,7 +78,7 @@ export default function RegisterPage() {
           </div>
         ) : (
           <>
-            <h1 className="mt-6 text-2xl font-bold text-white">Create your account</h1>
+            <h1 className="mt-6 text-2xl font-bold text-white">Create your IPcore account</h1>
             <p className="mt-1.5 text-sm text-slate-400">
               Get a dedicated Naira wallet and automated service delivery dashboard.
             </p>

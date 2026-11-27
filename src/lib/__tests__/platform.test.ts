@@ -13,6 +13,7 @@ import {
   hasSharedLogin,
   isSharedOptionSelected,
 } from "@/lib/product-notices";
+import { calculateRetailPriceNaira, resolveEnabledCountries } from "@/lib/virtualsms-pricing";
 
 describe("Encryption & Credential Vault", () => {
   it("encrypts and decrypts supplier secrets using AES-256-GCM", () => {
@@ -151,11 +152,11 @@ describe("Canonical App URL Resolution (Email Verification & Payment Redirects)"
 
       const req = new Request("http://localhost:3000/api/payments/bachs/initialize", {
         headers: {
-          "x-forwarded-host": "surplus-prod.vercel.app",
+          "x-forwarded-host": "ipcore-prod.vercel.app",
           "x-forwarded-proto": "https",
         },
       });
-      expect(getAppUrl(req)).toBe("https://surplus-prod.vercel.app");
+      expect(getAppUrl(req)).toBe("https://ipcore-prod.vercel.app");
     } finally {
       (process.env as Record<string, string>).NODE_ENV = prevEnv || "test";
       if (prevApp !== undefined) process.env.NEXT_PUBLIC_APP_URL = prevApp;
@@ -195,5 +196,45 @@ describe("Product Notices & Shared Login Helpers", () => {
     });
     expect(hasServiceSharedLogin({ label: "NordVPN Shared", metadata: {}, credentials: {} })).toBe(true);
     expect(hasServiceSharedLogin({ label: "ExpressVPN Private", metadata: {}, credentials: {} })).toBe(false);
+  });
+});
+
+describe("VirtualSMS Pricing & Country Matching", () => {
+  it("computes Math.ceil((wholesaleUsd * rate) * (1 + markup/100) + flatFee)", () => {
+    expect(
+      calculateRetailPriceNaira({
+        wholesaleUsd: 0.5,
+        usdToNgnRate: 1600,
+        markupPercent: 40,
+        flatFee: 0,
+      })
+    ).toBe(1120);
+
+    expect(
+      calculateRetailPriceNaira({
+        wholesaleUsd: 0.33,
+        usdToNgnRate: 1600,
+        markupPercent: 40,
+        flatFee: 100,
+      })
+    ).toBe(Math.ceil(0.33 * 1600 * 1.4 + 100));
+  });
+
+  it("matches configured USA and UK countries against live provider IDs", () => {
+    const resolved = resolveEnabledCountries(
+      [
+        { id: "187", name: "United States" },
+        { id: "16", name: "United Kingdom" },
+      ],
+      [
+        { id: "12", name: "USA" },
+        { id: "16", name: "England" },
+      ],
+      ["12", "16"]
+    );
+    expect(resolved).toEqual([
+      { id: "12", name: "USA" },
+      { id: "16", name: "England" },
+    ]);
   });
 });

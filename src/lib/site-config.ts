@@ -4,8 +4,8 @@ import type { SiteConfig } from "@/types/database";
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
   branding: {
-    brandName: "Veltrix Digital",
-    tagline: "Premium Digital Access Infrastructure",
+    brandName: "IPcore",
+    tagline: "Proxy, VPN & Digital Access Infrastructure",
     logoUrl: "",
     primaryColor: "#3B82F6",
     accentColor: "#8B5CF6",

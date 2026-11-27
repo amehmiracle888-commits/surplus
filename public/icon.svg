@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="ipcoreFavGrad" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#8B5CF6" />
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#070B19" stroke="url(#ipcoreFavGrad)" stroke-width="3" />
+  <path d="M32 13L48 22V42L32 51L16 42V22L32 13Z" stroke="url(#ipcoreFavGrad)" stroke-width="4" stroke-linejoin="round" />
+  <path d="M32 21V27M23 37L28 34M41 37L36 34" stroke="#93C5FD" stroke-width="3" stroke-linecap="round" />
+  <circle cx="32" cy="32" r="6" fill="url(#ipcoreFavGrad)" />
+  <circle cx="32" cy="32" r="2.5" fill="#FFFFFF" />
+</svg>

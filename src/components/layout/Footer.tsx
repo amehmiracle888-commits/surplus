@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Mail, MessageCircle, ShieldCheck } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { RESEARCH_DISCLAIMER_SHORT, RESEARCH_DISCLAIMER_TITLE } from "@/lib/product-notices";
 import type { SiteConfig } from "@/types/database";
 
@@ -11,12 +12,13 @@ export function Footer({ config }: { config: SiteConfig }) {
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-violet-600">
-                <ShieldCheck className="h-4 w-4 text-white" />
-              </div>
-              <span className="text-base font-semibold text-white">{config.branding.brandName}</span>
-            </div>
+            <Link href="/" className="inline-flex items-center">
+              <BrandLogo
+                brandName={config.branding.brandName}
+                logoUrl={config.branding.logoUrl}
+                size="sm"
+              />
+            </Link>
             <p className="text-sm leading-relaxed text-slate-400">
               {config.branding.tagline}. Transparent pricing in Nigerian Naira (₦) with Bachs.io
               verification and automated provisioning.

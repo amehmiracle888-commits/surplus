@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 112" fill="none">
+  <defs>
+    <linearGradient id="ipcoreLightGrad" x1="12" y1="12" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#7C3AED" />
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="96" height="96" rx="24" fill="#EFF6FF" stroke="url(#ipcoreLightGrad)" stroke-width="4" />
+  <path d="M56 26L82 41V71L56 86L30 71V41L56 26Z" stroke="url(#ipcoreLightGrad)" stroke-width="6" stroke-linejoin="round" />
+  <path d="M56 40V49M41 65L49 60M71 65L63 60" stroke="#3B82F6" stroke-width="4.5" stroke-linecap="round" />
+  <circle cx="56" cy="56" r="10" fill="url(#ipcoreLightGrad)" />
+  <circle cx="56" cy="56" r="4" fill="#FFFFFF" />
+  <circle cx="56" cy="37" r="4" fill="#2563EB" />
+  <circle cx="39" cy="66" r="4" fill="#4F46E5" />
+  <circle cx="73" cy="66" r="4" fill="#7C3AED" />
+  <text x="124" y="71" fill="#0F172A" font-family="Inter, ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="48" letter-spacing="-1">
+    <tspan font-weight="800" fill="#0F172A">IP</tspan><tspan font-weight="500" fill="#2563EB">core</tspan>
+  </text>
+</svg>
