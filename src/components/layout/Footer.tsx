@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, MessageCircle } from "lucide-react";
+import { Clock, Mail, MapPin, MessageCircle } from "lucide-react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { RESEARCH_DISCLAIMER_SHORT, RESEARCH_DISCLAIMER_TITLE } from "@/lib/product-notices";
 import type { SiteConfig } from "@/types/database";
@@ -117,6 +117,18 @@ export function Footer({ config }: { config: SiteConfig }) {
                     <MessageCircle className="h-4 w-4" />
                     WhatsApp Support
                   </a>
+                </li>
+              )}
+              {config.contact.officeLocation && (
+                <li className="flex items-start gap-2 pt-1 text-xs text-slate-400">
+                  <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
+                  <span>{config.contact.officeLocation}</span>
+                </li>
+              )}
+              {config.contact.businessHours && (
+                <li className="flex items-start gap-2 text-xs text-slate-400">
+                  <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
+                  <span>{config.contact.businessHours}</span>
                 </li>
               )}
             </ul>

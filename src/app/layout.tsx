@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const rawBaseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_APP_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://ipcore.com.ng");
 
   return {
     metadataBase: new URL(rawBaseUrl),

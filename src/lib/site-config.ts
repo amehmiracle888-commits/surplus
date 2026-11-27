@@ -22,12 +22,12 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
       "Once Bachs.io confirms your payment or your wallet is debited, our backend connects directly to the configured supplier API or operations queue to provision your service and deliver credentials into your dashboard and inbox.",
   },
   contact: {
-    supportEmail: "",
+    supportEmail: "support@ipcore.com.ng",
     whatsappUrl: "",
     whatsappDisplay: "",
     telegramUrl: "",
-    businessHours: "Mon - Sat, 8:00 AM - 8:00 PM WAT",
-    officeLocation: "Lagos, Nigeria",
+    businessHours: "Mon–Fri, 8:00 AM–5:00 PM",
+    officeLocation: "16 Idowu Martins St, Victoria Island, Lagos",
   },
   payment_limits: {
     minDepositNaira: 500,

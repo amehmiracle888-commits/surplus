@@ -18,8 +18,8 @@ export default async function ContactPage() {
         <p className="text-xs font-semibold uppercase tracking-wider text-blue-400">Support</p>
         <h1 className="mt-2 text-3xl font-bold text-white">Contact &amp; Customer Support</h1>
         <p className="mt-2 max-w-2xl text-sm text-slate-400">
-          Need assistance with an order, Paystack payment, or setup guide? Open a tracked ticket in
-          your dashboard or reach our team via the configured channels below.
+          Need assistance with an order, Bachs.io or wallet payment, or setup guide? Open a tracked
+          ticket in your dashboard or reach our team via the channels below.
         </p>
 
         <div className="mt-10 grid gap-6 md:grid-cols-2">
